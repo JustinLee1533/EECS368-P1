@@ -3,6 +3,7 @@ tetrisGame.currentState = [];
 tetrisGame.shapesArr = []; //array of all the shapes to add to current state
 tetrisGame.aboveArr = [];	//stores the indeces of objects above cleared rows
 tetrisGame.belowArr = [];	//stores objects below cleard rows
+tetrisGame.currentShape;
 tetrisGame.initialized = false;
 tetrisGame.falling = false;
 tetrisGame.dotLocation = 0;
@@ -17,28 +18,34 @@ tetrisGame.AddShape = function(shapeType, position, id)
 	if(!this.initialized){this.Initialize();}	//initialize
 
 	//create shape here
-	var newshape = new shape(shapeType, position);
+	this.currentShape = new shape(shapeType, position);
+	AddToConsole("debug 1");
+
+	//push it onto the shapesArr
+	this.shapesArr.push(this.currentShape);
+	AddToConsole("debug 2");
 
 	this.falling = true;
-	this.currentState[this.dotLocation] = 1;
+	//this.currentState[this.dotLocation] = 1;
 
-//TESTING PURPOSES: move block to left each time
+/*/TESTING PURPOSES: move block to left each time
 	this.count++;
 	if(this.count>9)
 	{
 		this.count = 0;
 	}
 	this.dotLocation = this.count;
-
+*/
 }
 
 tetrisGame.IncrementTime = function()
 {
+	AddToConsole("IncrementTime");
 
 	if(!this.initialized){this.Initialize();}
 
 	// Get the color
-	var color = this.currentState[this.dotLocation];
+	//var color = this.currentState[this.dotLocation];
 
 	// Increment the color
 	color++;
@@ -56,14 +63,14 @@ tetrisGame.IncrementTime = function()
 
 	//3. if the bottom edge of a block is in contact of the bottom, it can no longer fall
 
-	if((this.dotLocation + 1 > 190)||(this.currentState[this.dotLocation+10]!= -1))
+	/*if((this.dotLocation + 1 > 190)||(this.currentState[this.dotLocation+10]!= -1))
 	{
 		this.falling = false;
 		//4. if a row is unbroken, it is removed and increment the points
 		this.rowCheck();
 		return;
 	}else
-	{
+{
 		this.currentState[this.dotLocation] = -1;
 
 		// Move the dotLocation
@@ -71,6 +78,14 @@ tetrisGame.IncrementTime = function()
 
 		// Set the new current position of the dot to be filled
 		this.currentState[this.dotLocation] = color;
+//	}
+*/
+	for(var k = 0; k<4; k++)
+	{
+
+		this.currentShape.indices[k] += 10;
+		AddToConsole("debug 4");
+
 	}
 
 	//5. after a row is removed, everything above the row combines to become a single shape
@@ -86,23 +101,42 @@ tetrisGame.IncrementTime = function()
 
 tetrisGame.GetCurrentState = function()
 {
+	AddToConsole("getting current state");
+
 	if(!this.initialized){this.Initialize();}
 	//1. Clear the "currentState" array.
-
+	this.currentState = [];
+	for(var r = 0; r < 20; r++)
+	{
+		for(var c = 0; c < 10; c++)
+		{
+			this.currentState.push(-1);
+		}
+	}
 	//2. Draw each shape onto the board by adding to the array.
+	for(var k = 0; k<this.shapesArr.length; k++)
+	{
+		this.DrawShape(this.shapes[k]);
+
+	}
 	//3. Sending the array out.
+	AddToConsole("returning state");
 
 	return this.currentState;
 }
 
 tetrisGame.IsShapeFalling = function()
 {
+	AddToConsole("is shape falling");
 	if(!this.initialized){this.Initialize();}
+
 	return tetrisGame.falling;
 }
 
 tetrisGame.Initialize = function()
 {
+	AddToConsole("Initializing");
+
 	for(var i = 0; i < 10; i++)
 	{
 		for(var j = 0; j < 20; j++)
@@ -133,7 +167,6 @@ tetrisGame.i2y = function(i)
 
 tetrisGame.clearRow = function(i) //.slice(start index, stopindex), make a member function
 {
-	AddToConsole("calling clearRow");
 
 	this.setAbove(i);
 	this.setBelow(i);
@@ -213,9 +246,31 @@ tetrisGame.getAbove=function() // writes the aboveArr to the currentState array
 	}
 }
 
+
+tetrisGame.DrawShape = function(shape)
+{
+	// Draw center pixels
+	this.currentState[shape.center] = shape.type;
+	this.currentState[shape.center - 10] = shape.type;
+
+	// Draw left pixels
+	this.currentState[shape.center - 1] = shape.type;
+	this.currentState[shape.center - 2] = shape.type;
+	this.currentState[shape.center - 2 - 10] = shape.type;
+
+	// Draw right pixels
+	this.currentState[shape.center + 1] = shape.type;
+	this.currentState[shape.center + 2] = shape.type;
+	this.currentState[shape.center + 2 - 10] = shape.type;
+
+
+}
+
 shape = function(shapeType, position)
 {
-	this.colVal;
+	AddToConsole("creating shape");
+
+	this.colVal=shapeType;
 	this.indices = []; //array of the indices where each colVal maps to onthe currentState array
 	this.position = position;
 	this.shapeType = shapeType;
