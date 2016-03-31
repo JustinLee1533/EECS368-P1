@@ -8,11 +8,16 @@ tetrisGame.initialized = false;
 tetrisGame.falling = false;
 tetrisGame.points = 0;
 tetrisGame.shapeID = 0;
+tetrisGame.cur =0;
 
 tetrisGame.AddShape = function(shapeType, position, id)
 {
 	AddToConsole("Need to add shape with type = {"+shapeType+"}, position = {"+position+"}, and id = {" + id + "}");
-
+	this.cur +=2;
+	if(this.cur>8)
+	{
+		this.cur = 0;
+	}
 	if(!this.initialized){this.Initialize();}	//initialize
 
 	//create shape here
@@ -22,7 +27,7 @@ tetrisGame.AddShape = function(shapeType, position, id)
 		this.position = 6;
 	}
 	
-	this.currentShape = new shape(shapeType, position);
+	this.currentShape = new shape(4, this.cur);
 //TODO: block 6 hangs initially no matter what
 
 	this.falling = true;
@@ -31,6 +36,7 @@ tetrisGame.AddShape = function(shapeType, position, id)
 tetrisGame.IncrementTime = function()
 {
 	AddToConsole("IncrementTime");
+
 	
 	/*TODO peek to see if the currentShape is the one at the end of the shapesArr, if it is, pop it so we're not popping new objects
 		this.shapesArr.pop();
@@ -51,16 +57,13 @@ tetrisGame.IncrementTime = function()
 	var check1 = this.incCheck();
 	var check2 = this.bottomCheck();
 	
-	AddToConsole(check1);
-	AddToConsole(check2);
-	
 	if((this.incCheck())&&(this.bottomCheck())&&(this.currentShape.standard === "normal")) // its not going to hit anything, so move each piece down 
 	{
 		for(var z = 0; z<4; z++)
 		{
 			this.currentShape.indices[z] +=10; 
 		}
-	}else if (/*(run a check on the )&&*/(this.currentShape.standard === "irregular"))		
+	}else if (/*(run a check on the irregular)&&*/(this.currentShape.standard === "irregular"))		
 	{
 			//TODO allow for irregular shape exceptions here
 	}else //its going to hit something, stop the object from falling
@@ -69,7 +72,7 @@ tetrisGame.IncrementTime = function()
 		this.falling = false;
 		this.currentShape.isFalling=false;
 		
-		//this.rowCheck();
+		this.rowCheck();
 		//Questions what to do new next: add the current shape to shapes Arr?
 	}
 	this.shapesArr.push(this.currentShape); // push currentShape onto the shapes array
@@ -153,13 +156,17 @@ tetrisGame.clearRow = function(i)
 //TODO check each index of the shapes arr and remove it if its in the row
 	for(var k =0; k<this.shapesArr.length; k++)
 	{
-		for(var m=0; m<this.shapesArr[i].indices.length; m++)
+		for(var m=0; m<this.shapesArr[k].indices.length; m++)
 		{
 			//check its between i and i+9
-			if((this.shapesArr[k].indices[m]>i)&&(this.shapesArr[k].indices[m]))
+			if((this.shapesArr[k].indices[m]>=i)&&(this.shapesArr[k].indices[m]))
 			{
 				//remove the index from the indices array of the shape in the shapes arr
 				this.shapesArr[k].indices.splice(m,1);
+				if(this.shapesArr[k].indices.length == 0) // this is a check to make sure empty objects are removed from the shapesArr
+				{
+					this.shapesArr.splice(k,1);
+				}
 			}
 		}
 	}
@@ -482,10 +489,11 @@ tetrisGame.incCheck = function()
 		{
 			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
 			{
+
 				return false;
 			}else
 			{
-				AddToConsole("Not a valid shape")
+				return true;
 			}			
 		}
 	}else if((this.currentShape.direction === 1)&&(this.currentShape.standard === "normal"))
@@ -707,10 +715,10 @@ tetrisGame.DrawShape = function(shape)
 	}
 }
 
-shape = function(type, position)
+shape = function(type, pos)
 {
 	this.indices = []; //array of the indices where each colVal maps to onthe currentState array
-	this.position = position;
+	this.position = pos;
 	this.shapeType = type;
 	this.isFalling = false;
 	this.center=0;	//pivot
@@ -719,38 +727,38 @@ shape = function(type, position)
 
 	if(this.shapeType === 0)	//----
 	{
-		this.indices.push(position, position+1, position+2, position+3);
-		this.center = position+1;
+		this.indices.push(this.position, this.position+1, this.position+2, this.position+3);
+		this.center = this.position+1;
 		this.standard= "normal";
 	}else if(this.shapeType ===1)// _|_
 	{
-		this.center = position+1;
-		this.indices.push(position, position+1, position+2, position+11);
+		this.center = this.position+1;
+		this.indices.push(this.position, this.position+1, this.position+2, this.position+11);
 		this.standard= "normal";
 	}else if(this.shapeType===2) // --_
 	{
-		this.center = position+11;
-		this.indices.push(position, position+1, position+11, position+12);
+		this.center = this.position+11;
+		this.indices.push(this.position, this.position+1, this.position+11, this.position+12);
 		this.standard= "normal";
 	}else if(this.shapeType===3) // _--
 	{
-		this.center = position+11;
-		this.indices.push(position+10, position+11, position+1, position+2);
+		this.center = this.position+11;
+		this.indices.push(this.position+10, this.position+11, this.position+1, this.position+2);
 		this.standard= "normal";
 	}else if(this.shapeType===4) // ||
 	{
-		this.center = position;
-		this.indices.push(position, position+1, position+10, position+11);
+		this.center = this.position;
+		this.indices.push(this.position, this.position+1, this.position+10, this.position+11);
 		this.standard= "normal";
 	}else if(this.shapeType ===5) //|___
 	{
-		this.center = position+11;
-		this.indices.push(position, position+10, position+11, position+12);
+		this.center = this.position+11;
+		this.indices.push(this.position, this.position+10, this.position+11, this.position+12);
 		this.standard= "normal";
-	}else // L
+	}else if(this.shapeType ===6)
 	{
-		this.center = position+1;
-		this.indices.push(position+10, position, position+1, position+2);
+		this.center = this.position+1;
+		this.indices.push(this.position+10, this.position, this.position+1, this.position+2);
 		this.standard= "normal";
 	}
 }
