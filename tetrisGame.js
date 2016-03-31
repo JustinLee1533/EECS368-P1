@@ -16,10 +16,14 @@ tetrisGame.AddShape = function(shapeType, position, id)
 	if(!this.initialized){this.Initialize();}	//initialize
 
 	//create shape here
-	this.currentShape = new shape(0, position);
-
-	//push it onto the shapesArr TODO, this after its done falling
-	//this.shapesArr.push(this.currentShape);
+	
+	if((this.posistion>=7)&&(this.shapeType == 0))
+	{
+		this.position = 6;
+	}
+	
+	this.currentShape = new shape(shapeType, position);
+//TODO: block 6 hangs initially no matter what
 
 	this.falling = true;
 }
@@ -27,7 +31,10 @@ tetrisGame.AddShape = function(shapeType, position, id)
 tetrisGame.IncrementTime = function()
 {
 	AddToConsole("IncrementTime");
-	this.shapesArr.pop();
+	
+	/*TODO peek to see if the currentShape is the one at the end of the shapesArr, if it is, pop it so we're not popping new objects
+		this.shapesArr.pop();
+		*/
 	if(!this.initialized){this.Initialize();}
 	//1.each call, every falling block in the game must move down 1 unit
 	//can move any number of left or right per call
@@ -37,215 +44,33 @@ tetrisGame.IncrementTime = function()
 	//where the function call results in contact, no other actions can take place
 
 	//3. if the bottom edge of a block is in contact of the bottom, it can no longer fall
-
-	//determine the critical pieces of the current shape based on if its a "normal" shape and determine which of the four orientations it has, 
-	var flag = true;
 	
-	//TODO, not correct.  Needs to compare the indices of the current shapes and the Currentstate Array
-	if((this.currentShape.direction === 0)&&(this.currentShape.standard === "normal")) 
-	{
-		if(this.currentShape.shapeType == 0)	//check the relevant critical spots
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 1)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10]!= -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 2)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 3)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 4)
-		{
-			if((this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 5)
-		{
-			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}	
-		}else if(this.currentShape.shapeType === 6)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		
-		AddToConsole("reaching end of if-else-if block without entering");
-			
-		}
-	}else if((this.currentShape.direction === 1)&&(this.currentShape.standard === "normal"))
-	{
-		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
-		{
-			if(this.currentState[this.currentShape.indices[0]+10] != -1)
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 1)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 2)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 3)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 4)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 5)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}	
-		}else if(this.currentShape.shapeType === 6)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1))
-			{
-				flag = false;
-			}
-		}
-	}else if ((this.currentShape.direction === 2)&&(this.currentShape.standard === "normal"))
-	{
-		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 1)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 2)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 3)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 4)
-		{
-			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[0]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 5)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}	
-		}else if(this.currentShape.shapeType === 6)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1))
-			{
-				flag = false;
-			}
-		}
-	}else if ((this.currentShape.direction === 3)&&(this.currentShape.standard === "normal"))
-	{
-		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 1)
-		{
-			if((this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 2)
-		{
-			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 3)
-		{
-			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 4)
-		{
-			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}else if(this.currentShape.shapeType === 5)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1))
-			{
-				flag = false;
-			}	
-		}else if(this.currentShape.shapeType === 6)
-		{
-			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
-			{
-				flag = false;
-			}
-		}
-	}
-
-	if((flag === true)&&(this.currentShape.standard === "normal")) // its not going to hit anything, so move each piece down 
+	//determine the critical pieces of the current shape based on if its a "normal" shape and determine which of the four orientations it has, 
+	
+	//compare the indices of the current shapes and the Currentstate Array
+	var check1 = this.incCheck();
+	var check2 = this.bottomCheck();
+	
+	AddToConsole(check1);
+	AddToConsole(check2);
+	
+	if((this.incCheck())&&(this.bottomCheck())&&(this.currentShape.standard === "normal")) // its not going to hit anything, so move each piece down 
 	{
 		for(var z = 0; z<4; z++)
 		{
 			this.currentShape.indices[z] +=10; 
 		}
-
-	}else if ((flag === true)&&(this.currentShape.standard === "irregular"))		
+	}else if (/*(run a check on the )&&*/(this.currentShape.standard === "irregular"))		
 	{
 			//TODO allow for irregular shape exceptions here
-
 	}else //its going to hit something, stop the object from falling
 	{
-		this.isFalling = false;
-		
+		AddToConsole("stop falling");
+		this.falling = false;
+		this.currentShape.isFalling=false;
 		
 		//this.rowCheck();
-		//Questions what to do new next: add the current shape to shapes Arr? how to deal with partially deleted shapes?
-		//could check each shape in shapesArr to see if it has an index in the row delete zone., if it does, delete it
+		//Questions what to do new next: add the current shape to shapes Arr?
 	}
 	this.shapesArr.push(this.currentShape); // push currentShape onto the shapes array
 
@@ -253,11 +78,6 @@ tetrisGame.IncrementTime = function()
 	//5. after a row is removed, everything above the row combines to become a single shape
 	// and begins falling following the same rules as above
 
-	//6. blocks may be rotated left or right by 90 degrees any number of times during a call
-
-	//7. after a set number of cleared lines, the game enters a mode where multiple blocks
-	// can fall at the same times
-	// Set the current position of the dot to be empty
 }
 
 tetrisGame.GetCurrentState = function()
@@ -287,9 +107,10 @@ tetrisGame.GetCurrentState = function()
 tetrisGame.IsShapeFalling = function()
 {
 	AddToConsole("is shape falling");
+	AddToConsole(this.falling);
 	if(!this.initialized){this.Initialize();}
 
-	return tetrisGame.falling;
+	return this.falling;
 }
 
 tetrisGame.Initialize = function()
@@ -327,8 +148,8 @@ tetrisGame.i2y = function(i)
 tetrisGame.clearRow = function(i) 
 {
 	AddToConsole("Calling clearRow");
-	this.setAbove(i);
-	this.setBelow(i);
+	//this.setAbove(i);
+	//this.setBelow(i);
 //TODO check each index of the shapes arr and remove it if its in the row
 	for(var k =0; k<this.shapesArr.length; k++)
 	{
@@ -409,32 +230,495 @@ tetrisGame.getAbove=function() // writes the aboveArr to the currentState array
 	}
 }
 
+tetrisGame.bottomCheck = function()
+{
+	if((this.currentShape.direction === 0)&&(this.currentShape.standard === "normal")) 
+	{
+		if(this.currentShape.shapeType == 0)	//check the relevant critical spots
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 1)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10> 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 2)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 3)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 4)
+		{
+			if((this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 5)
+		{
+			if((this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}	
+		}else if(this.currentShape.shapeType === 6)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}			
+		}
+	}else if((this.currentShape.direction === 1)&&(this.currentShape.standard === "normal"))
+	{
+		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
+		{
+			if(this.currentShape.indices[0]+10 > 199)
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 1)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 2)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 3)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 4)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 5)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}	
+		}else if(this.currentShape.shapeType === 6)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[1]+10 > 199))
+			{
+				return false;
+			}
+		}
+	}else if ((this.currentShape.direction === 2)&&(this.currentShape.standard === "normal"))
+	{
+		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 1)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[1]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 2)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 3)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 4)
+		{
+			if((this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[0]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 5)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}	
+		}else if(this.currentShape.shapeType === 6)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[1]+10 > 199))
+			{
+				return false;
+			}
+		}
+	}else if ((this.currentShape.direction === 3)&&(this.currentShape.standard === "normal"))
+	{
+		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 1)
+		{
+			if((this.currentShape.indices[2]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 2)
+		{
+			if((this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 3)
+		{
+			if((this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 4)
+		{
+			if((this.currentShape.indices[1]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else if(this.currentShape.shapeType === 5)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[1]+10 > 199))
+			{
+				return false;
+			}	
+		}else if(this.currentShape.shapeType === 6)
+		{
+			if((this.currentShape.indices[0]+10 > 199)||(this.currentShape.indices[3]+10 > 199))
+			{
+				return false;
+			}
+		}else
+		{
+			return true;
+		}
+	}
+	
+	return(true);
+}
+
+tetrisGame.incCheck = function()
+{
+	if((this.currentShape.direction === 0)&&(this.currentShape.standard === "normal")) 
+	{
+		if(this.currentShape.shapeType == 0)	//check the relevant critical spots
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 1)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10]!= -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 2)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 3)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 4)
+		{
+			if((this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 5)
+		{
+			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 6)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				AddToConsole("Not a valid shape")
+			}			
+		}
+	}else if((this.currentShape.direction === 1)&&(this.currentShape.standard === "normal"))
+	{
+		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
+		{
+			if(this.currentState[this.currentShape.indices[0]+10] != -1)
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 1)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 2)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 3)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 4)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 5)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 6)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				AddToConsole("Not a valid shape");
+			}
+		}
+	}else if ((this.currentShape.direction === 2)&&(this.currentShape.standard === "normal"))
+	{
+		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 1)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 2)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 3)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 4)
+		{
+			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[0]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 5)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 6)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else
+		{
+			AddToConsole("Not a valid shape")
+		}
+	}else if ((this.currentShape.direction === 3)&&(this.currentShape.standard === "normal"))
+	{
+		if(this.currentShape.shapeType === 0)	//check the relevant critical spots
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 1)
+		{
+			if((this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 2)
+		{
+			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 3)
+		{
+			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 4)
+		{
+			if((this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else if(this.currentShape.shapeType === 5)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}	
+		}else if(this.currentShape.shapeType === 6)
+		{
+			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
+			{
+				return false;
+			}else
+			{
+				return true;
+			}
+		}else
+		{
+			AddToConsole("Not a valid shape")
+		}
+	}else
+	{
+		AddToConsole("Either invalid direction or not a 'normal' type");
+	}
+}
+
 tetrisGame.DrawShape = function(shape)
 {
 	for(var i =0; i<shape.indices.length; i++) //for each shape in the shapes arr
 	{
-		//TODO draw each pixel 
+		//draw each pixel 
 		this.currentState[shape.indices[i]]=shape.shapeType;
 	}
 }
 
 shape = function(type, position)
 {
-	AddToConsole("creating shape with shapeType set to"+type);
-
 	this.indices = []; //array of the indices where each colVal maps to onthe currentState array
 	this.position = position;
 	this.shapeType = type;
 	this.isFalling = false;
 	this.center=0;	//pivot
-	this.standard=0; //this will be used to distinguish between standard added shapes and the ones that are formed above the rows that are cleared
+	this.standard= "normal"; //this will be used to distinguish between standard added shapes and the ones that are formed above the rows that are cleared
 	this.direction = 0;	//on of a maximum of four possible orientations
-
-	AddToConsole("confirming shapeType set to"+this.shapeType);
 
 	if(this.shapeType === 0)	//----
 	{
-		AddToConsole("Creating this shape like we're supposed to");
 		this.indices.push(position, position+1, position+2, position+3);
 		this.center = position+1;
 		this.standard= "normal";
