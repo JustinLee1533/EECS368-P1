@@ -1,15 +1,25 @@
-tetrisGame = {};
-tetrisGame.currentState = [];
+/*
+*	@author: Justin Lee
+*	@date:	4/3/2016
+*	@name:	tetrisGame.js
+*/
+tetrisGame = {};	//tetris game object
+tetrisGame.currentState = []; //array that holds all the values of the tetris game
 tetrisGame.shapesArr = []; //array of all the shapes to add to current state
 tetrisGame.aboveArr = [];	//stores the indeces of objects above cleared rows
 tetrisGame.belowArr = [];	//stores objects below cleard rows
-tetrisGame.currentShape = 0;
-tetrisGame.initialized = false;
-tetrisGame.falling = false;
-tetrisGame.points = 0;
-tetrisGame.shapeID = 0;
-tetrisGame.cur =0;
+tetrisGame.currentShape = 0; //current shape moving 
+tetrisGame.initialized = false; //whether the currentState array has had 200 -1's pushed to it
+tetrisGame.falling = false;	//boolean value whether the shape is moving or not 
+tetrisGame.points = 0;	//the score that the user has
+tetrisGame.shapeID = 0;	//unique id of each shape
+tetrisGame.cur =0;	//for testing/debug purposes
 
+/*
+	@Pre: A shapeType, position, and id are passed in;
+	@Post: a new shape is created with the parameters passed in and falling is se to true
+	@Return: None
+*/
 tetrisGame.AddShape = function(shapeType, position, id)
 {
 	AddToConsole("Need to add shape with type = {"+shapeType+"}, position = {"+position+"}, and id = {" + id + "}");
@@ -28,17 +38,19 @@ tetrisGame.AddShape = function(shapeType, position, id)
 	}
 	
 	this.currentShape = new shape(4, this.cur);
-//TODO: block 6 hangs initially no matter what
-
 	this.falling = true;
 }
 
+/*
+	@Pre: a shape is currently falling
+	@Post: the shape can move left or right, rotate, and move down, provided it will not hit another block
+	@Return: None
+*/
 tetrisGame.IncrementTime = function()
 {
 	AddToConsole("IncrementTime");
 
-	
-	/*TODO peek to see if the currentShape is the one at the end of the shapesArr, if it is, pop it so we're not popping new objects
+		/*TODO peek to see if the currentShape is the one at the end of the shapesArr, if it is, pop it so we're not popping new objects
 		this.shapesArr.pop();
 		*/
 	if(!this.initialized){this.Initialize();}
@@ -73,7 +85,6 @@ tetrisGame.IncrementTime = function()
 		this.currentShape.isFalling=false;
 		
 		this.rowCheck();
-		//Questions what to do new next: add the current shape to shapes Arr?
 	}
 	this.shapesArr.push(this.currentShape); // push currentShape onto the shapes array
 
@@ -83,6 +94,11 @@ tetrisGame.IncrementTime = function()
 
 }
 
+/*
+	@Pre: None
+	@Post: The currentState array is cleared and redrawn with each of the shapes in the shapesArr
+	@Return: the currentState array
+*/
 tetrisGame.GetCurrentState = function()
 {
 	AddToConsole("getting current state");
@@ -107,6 +123,11 @@ tetrisGame.GetCurrentState = function()
 	return this.currentState;
 }
 
+/*
+	@Pre: None
+	@Post: None
+	@Return: The falling boolean 
+*/
 tetrisGame.IsShapeFalling = function()
 {
 	AddToConsole("is shape falling");
@@ -116,6 +137,11 @@ tetrisGame.IsShapeFalling = function()
 	return this.falling;
 }
 
+/*
+	@Pre: None
+	@Post: the currentState array has 200 -1's pushed to it
+	@Return: None
+*/
 tetrisGame.Initialize = function()
 {
 	AddToConsole("Initializing");
@@ -130,30 +156,50 @@ tetrisGame.Initialize = function()
 	this.initialized = true;
 }
 
+/*
+	@Pre: two x and y integers are passed in
+	@Post: the two parameters are converted into an integer
+	@Return: an integer corresponding to an index on the currentState Array
+*/
 tetrisGame.cart2i = function(x,y)
 {
 	var i = x+(10*y);
 	return(i);
 }
 
+/*
+	@Pre: an index from the currentState array is passed in
+	@Post: the index's x cartesian value is computed
+	@Return: the x value of the index 
+*/
 tetrisGame.i2x = function(i)
 {
 	var x = i%10;
 	return(x);
 }
 
+/*
+	@Pre: an index from the currentState array is passed in
+	@Post: the index's y cartesian value is computed
+	@Return: the y value of the index 
+*/
 tetrisGame.i2y = function(i)
 {
 	var y = i/10;
 	return(y);
 }
 
+/*
+	@Pre: an index from the currentState array is passed in
+	@Post: removes blocks from completed rows in the shapesArr
+	@Return: None
+*/
 tetrisGame.clearRow = function(i) 
 {
 	AddToConsole("Calling clearRow");
 	//this.setAbove(i);
 	//this.setBelow(i);
-//TODO check each index of the shapes arr and remove it if its in the row
+
 	for(var k =0; k<this.shapesArr.length; k++)
 	{
 		for(var m=0; m<this.shapesArr[k].indices.length; m++)
@@ -173,6 +219,11 @@ tetrisGame.clearRow = function(i)
 	this.GetCurrentState();
 }
 
+/*
+	@Pre: Currentstate is initialized
+	@Post: rows are checked to see if they are completed
+	@Return: None
+*/
 tetrisGame.rowCheck = function()
 {
 	AddToConsole("row check");
@@ -197,6 +248,11 @@ tetrisGame.rowCheck = function()
 	}
 }
 
+/*
+	@Pre: an index of the currentState array is passed in 
+	@Post: all the pixels below the row being cleared are passed in
+	@Return: 
+*/
 tetrisGame.setBelow=function(i)
 {
 	this.belowArr = [];
@@ -209,6 +265,11 @@ tetrisGame.setBelow=function(i)
 	}
 }
 
+/*
+	@Pre: an index of the currentState array is passed in 
+	@Post: all the pixels from the belowArr are pushed onto the current state array
+	@Return: None
+*/
 tetrisGame.getBelow=function()
 {
 	for(var j = 0; j<this.aboveArr.length; j++)
@@ -217,6 +278,11 @@ tetrisGame.getBelow=function()
 	}
 }
 
+/*
+	@Pre: an index of the currentState array is passed in 
+	@Post: all the pixels above the row being cleared are passed in
+	@Return: 
+*/
 tetrisGame.setAbove=function(i) // store all the pieces into a single object when a row is cleared, above the row that was just cleared
 {
 	this.aboveArr = [];
@@ -229,6 +295,11 @@ tetrisGame.setAbove=function(i) // store all the pieces into a single object whe
 	}
 }
 
+/*
+	@Pre: an index of the currentState array is passed in 
+	@Post: all the pixels from the aboveArr are pushed onto the current state array
+	@Return: None
+*/
 tetrisGame.getAbove=function() // writes the aboveArr to the currentState array
 {
 	for(var j = 0; j<this.aboveArr.length; j++)
@@ -237,6 +308,11 @@ tetrisGame.getAbove=function() // writes the aboveArr to the currentState array
 	}
 }
 
+/*
+	@Pre: a shape is falling
+	@Post: None
+	@Return: false if the shape is going to hit the bottom of the array, else true
+*/
 tetrisGame.bottomCheck = function()
 {
 	if((this.currentShape.direction === 0)&&(this.currentShape.standard === "normal")) 
@@ -427,6 +503,11 @@ tetrisGame.bottomCheck = function()
 	return(true);
 }
 
+/*
+	@Pre: a shape is falling
+	@Post: None
+	@Return: false if the shape is going to hit another shape, else true
+*/
 tetrisGame.incCheck = function()
 {
 	if((this.currentShape.direction === 0)&&(this.currentShape.standard === "normal")) 
@@ -706,6 +787,11 @@ tetrisGame.incCheck = function()
 	}
 }
 
+/*
+	@Pre: a shape is passed in 
+	@Post: each pixel of the shape is pushed onto the currentState array
+	@Return: None
+*/
 tetrisGame.DrawShape = function(shape)
 {
 	for(var i =0; i<shape.indices.length; i++) //for each shape in the shapes arr
@@ -715,6 +801,11 @@ tetrisGame.DrawShape = function(shape)
 	}
 }
 
+/*
+	@Pre: the type and position of the shape is passed in
+	@Post: a shape is created 
+	@Return: None
+*/
 shape = function(type, pos)
 {
 	this.indices = []; //array of the indices where each colVal maps to onthe currentState array
