@@ -31,13 +31,7 @@ tetrisGame.AddShape = function(shapeType, position, id)
 	if(!this.initialized){this.Initialize();}	//initialize
 
 	//create shape here
-
-	if((this.posistion>=7)&&(this.shapeType == 0))
-	{
-		this.position = 6;
-	}
-
-	this.currentShape = new shape(0, this.cur);
+	this.currentShape = new shape(0, 6);
 	this.falling = true;
 }
 
@@ -50,9 +44,7 @@ tetrisGame.IncrementTime = function()
 {
 	AddToConsole("IncrementTime");
 
-		/*TODO peek to see if the currentShape is the one at the end of the shapesArr, if it is, pop it so we're not popping new objects
-		this.shapesArr.pop();
-		*/
+
 	if(!this.initialized){this.Initialize();}
 	//1.each call, every falling block in the game must move down 1 unit
 	//can move any number of left or right per call
@@ -67,11 +59,16 @@ tetrisGame.IncrementTime = function()
 
 	//compare the indices of the current shapes and the Currentstate Array
 
-	this.rotLeft(this.currentShape);
+	//this.rotLeft(this.currentShape);
+	this.moveLeft(this.currentShape);
 
 	var check1 = this.incCheck();
 	var check2 = this.bottomCheck();
 
+	AddToConsole("incCheck: "+check1);
+	AddToConsole("bottomCheck: "+check2);
+
+//TODO fails incCheck after two rotations for some reason
 	if((this.incCheck())&&(this.bottomCheck())&&(this.currentShape.standard === "normal")) // its not going to hit anything, so move each piece down
 	{
 		for(var z = 0; z<4; z++)
@@ -203,12 +200,12 @@ tetrisGame.clearRow = function(i)
 	//this.setAbove(i);
 	//this.setBelow(i);
 
-	for(var k =0; k<this.shapesArr.length; k++)
+	for(var k =0; k<this.shapesArr.length; k++) // for ever shape
 	{
-		for(var m=0; m<this.shapesArr[k].indices.length; m++)
+		for(var m=0; m<this.shapesArr[k].indices.length; m++)// for each of its indices
 		{
 			//check its between i and i+9
-			if((this.shapesArr[k].indices[m]>=i)&&(this.shapesArr[k].indices[m]))
+			if((this.shapesArr[k].indices[m]>=i)&&(this.shapesArr[k].indices[m]<= i+9))
 			{
 				//remove the index from the indices array of the shape in the shapes arr
 				this.shapesArr[k].indices.splice(m,1);
@@ -508,6 +505,250 @@ tetrisGame.bottomCheck = function()
 
 /*
 	@Pre: a valid shape is passed in, and its falling
+	@Post: a shape is moved left, provided it does not run into anything else
+	@Return: true if shape was moved, else false
+*/
+
+tetrisGame.moveLeft = function(shape)
+{
+	if(shape.shapeType == 0)
+	{
+		if(shape.direction == 0)
+		{
+			if((this.currentState[shape.indices[0]-1] == -1)&&(this.i2x(shape.indices[0]) != 0))
+			{
+				this.currentState[shape.indices[3]] = -1;
+				shape.indices[0] = shape.indices[0]-1; // move each of the indices
+				shape.indices[1] = shape.indices[1]-1;
+				shape.indices[2] = shape.indices[2]-1;
+				shape.indices[3] = shape.indices[3]-1;
+
+				return true;
+			}else
+			{
+					return false;
+			}
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 1)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 2)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 3)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 4)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 5)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 6)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}
+}
+
+/*
+	@Pre: a valid shape is passed in, and its falling
+	@Post: a shape is moved right, provided it does not run into anything else
+	@Return: true if shape was rotated, else false
+*/
+
+tetrisGame.moveRight = function(shape)
+{
+	if(shape.shapeType == 0)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 1)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 2)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 3)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 4)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 5)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}else if(shape.shapeType == 6)
+	{
+		if(shape.direction == 0)
+		{
+
+		}else if(shape.direction == 1)
+		{
+
+		}else if(shape.direction == 2)
+		{
+
+		}else if(shape.direction == 3)
+		{
+
+		}
+	}
+}
+
+/*
+	@Pre: a valid shape is passed in, and its falling
 	@Post: a shape is rotated left, provided it does not run into anything else
 	@Return: true if shape was rotated, else false
 */
@@ -517,6 +758,7 @@ tetrisGame.bottomCheck = function()
 //update  direction
 tetrisGame.rotLeft = function(shape)
 {
+	AddToConsole("calling rotLeft")
 	if(shape.shapeType === 0)	//----
 	{
 		if(shape.direction == 0)
@@ -534,6 +776,11 @@ tetrisGame.rotLeft = function(shape)
 				)
 				{
 					//rotate the shape
+					for(var j = 0; j<4; j++)
+					{
+						this.currentState[shape.indices[j]] = -1;
+					}
+
 					shape.indices[0] = shape.indices[0]+21;
 					shape.indices[1] = shape.indices[1]+10;
 					shape.indices[2] = shape.indices[2]-1;
@@ -542,12 +789,12 @@ tetrisGame.rotLeft = function(shape)
 
 
 					shape.direction = 1;
-					return true;
+
 				}else {
-					AddToConsole("can't rotating");
+					AddToConsole("can't rotate");
 
 				}
-		}else if(this.direction == 1)
+		}else if(shape.direction == 1)
 		{
 			if((this.currentState[shape.indices[3]-1] == -1)&& /*begin rotation check*/
 				(this.currentState[shape.indices[3]+9] == -1)&&
@@ -558,9 +805,13 @@ tetrisGame.rotLeft = function(shape)
 				(this.currentState[shape.indices[0]+8] == -1)&& /*end rotation check*/
 				(this.i2x(shape.indices[3]) != 0)&& /*begin boundary check (not in columns 0, 8, or 9)*/
 				(this.i2x(shape.indices[3]) != 8)&&
-				(this.i2x(shape.indices[3]) != 9)/*end boundary check*/
+				(this.i2x(shape.indices[3]) <= 7)/*end boundary check*/
 			)
 			{
+				for(var j = 0; j<4; j++)
+				{
+					this.currentState[shape.indices[j]] = -1;
+				}
 				shape.indices[0] = shape.indices[0]-8;
 				shape.indices[1] = shape.indices[1]+1;
 				shape.indices[2] = shape.indices[2]+10;
@@ -568,11 +819,10 @@ tetrisGame.rotLeft = function(shape)
 				shape.direction = 2;
 				AddToConsole("rotating");
 
-				return true;
 			}else {
 				AddToConsole("Can't rotate");
 			}
-		}else if(this.direction == 2)
+		}else if(shape.direction == 2)
 		{
 			if((this.currentState[shape.indices[0]-10] == -1)&& /*check to see if rotation will hit other blocks*/
 					(this.currentState[shape.indices[0]-20] == -1)&&
@@ -586,6 +836,11 @@ tetrisGame.rotLeft = function(shape)
 					(this.i2y(shape.indices[0]) != 19) /*end boundary check*/
 			)
 			{
+
+				for(var j = 0; j<4; j++)
+				{
+					this.currentState[shape.indices[j]] = -1;
+				}
 				shape.indices[0] = shape.indices[0]-21;
 				shape.indices[1] = shape.indices[1]-10;
 				shape.indices[2] = shape.indices[2]+1;
@@ -593,12 +848,11 @@ tetrisGame.rotLeft = function(shape)
 				shape.direction = 3;
 				AddToConsole("rotating");
 
-				return true;
 			}else {
 				AddToConsole("can't rotating");
 
 			}
-		}else if(this.direction == 3)
+		}else if(shape.direction == 3)
 		{
 			if((this.currentState[shape.indices[3]+1] == -1)&& /*begin rotation check*/
 				(this.currentState[shape.indices[3]-9] == -1)&&
@@ -609,17 +863,21 @@ tetrisGame.rotLeft = function(shape)
 				(this.currentState[shape.indices[0]-8] == -1)&& /*end rotation check*/
 				(this.i2x(shape.indices[3]) != 0)&& /*begin boundary check (not in columns 0, 1, or 9)*/
 				(this.i2x(shape.indices[3]) != 1)&&
-				(this.i2x(shape.indices[3]) != 9) /*end boundary check*/
+				(this.i2x(shape.indices[3]) <= 8) /*end boundary check*/
 			)
 			{
+
+				for(var j = 0; j<4; j++)
+				{
+					this.currentState[shape.indices[j]] = -1;
+				}
 				shape.indices[0] = shape.indices[0]+8;
 				shape.indices[1] = shape.indices[1]-1;
-				shape.indices[2] = shape.indices[2]+10;
+				shape.indices[2] = shape.indices[2]-10;
 				shape.indices[3] = shape.indices[3]-19;
 				AddToConsole("rotating");
 
 				shape.direction = 0;
-				return true;
 			}else
 			{
 				AddToConsole("can't rotating");
@@ -681,7 +939,6 @@ tetrisGame.rotLeft = function(shape)
 		}
 	}else if(this.shapeType===4) // ||
 	{
-		return false;
 	}else if(this.shapeType ===5) //|___
 	{
 		if(this.direction == 0)
@@ -713,6 +970,7 @@ tetrisGame.rotLeft = function(shape)
 
 		}
 	}
+
 }
 
 /*
@@ -892,6 +1150,10 @@ tetrisGame.incCheck = function()
 		{
 			if((this.currentState[this.currentShape.indices[0]+10] != -1)||(this.currentState[this.currentShape.indices[1]+10] != -1)||(this.currentState[this.currentShape.indices[2]+10] != -1)||(this.currentState[this.currentShape.indices[3]+10] != -1))
 			{
+				AddToConsole("index 0: "+this.currentState[this.currentShape.indices[0]+10]);
+				AddToConsole("index 1: "+this.currentState[this.currentShape.indices[1]+10]);
+				AddToConsole("index 2: "+this.currentState[this.currentShape.indices[2]+10]);
+				AddToConsole("index 3: "+this.currentState[this.currentShape.indices[3]+10]);
 				return false;
 			}else
 			{
@@ -1061,7 +1323,14 @@ shape = function(type, pos)
 
 	if(this.shapeType === 0)	//----
 	{
-		this.indices.push(this.position, this.position+1, this.position+2, this.position+3);
+		if(this.pos<6)
+		{
+			this.indices.push(this.position, this.position+1, this.position+2, this.position+3);
+		}else
+		{
+			this.indices.push(6,7,8,9);
+
+		}
 		this.center = this.position+1;
 		this.standard= "normal";
 	}else if(this.shapeType ===1)// _|_
